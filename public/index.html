@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS-7 // Cyberpunk AI Terminal</title>
+  <meta name="description" content="NEXUS-7 — A cyberpunk AI chatbot interface powered by neural networks from Neo-Tokyo's underground.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Animated Background Layers -->
+  <div class="bg-layer">
+    <div class="bg-image"></div>
+    <div class="bg-gradient"></div>
+    <div class="scanlines"></div>
+    <div class="rain-container" id="rainContainer"></div>
+    <div class="grid-overlay"></div>
+    <canvas id="particleCanvas"></canvas>
+  </div>
+
+  <!-- Main App Container -->
+  <div class="app-container">
+    <!-- Header / HUD Bar -->
+    <header class="hud-header" id="hudHeader">
+      <div class="hud-left">
+        <div class="hud-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L37 11V29L20 38L3 29V11L20 2Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <path d="M20 8L31 14V26L20 32L9 26V14L20 8Z" stroke="currentColor" stroke-width="1" fill="none" opacity="0.6"/>
+              <circle cx="20" cy="20" r="4" fill="currentColor" opacity="0.8"/>
+              <line x1="20" y1="16" x2="20" y2="8" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+              <line x1="20" y1="24" x2="20" y2="32" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+              <line x1="16" y1="20" x2="9" y2="20" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+              <line x1="24" y1="20" x2="31" y2="20" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-main" data-text="NEXUS-7">NEXUS-7</span>
+            <span class="logo-sub">NEURAL INTERFACE v7.2.1</span>
+          </div>
+        </div>
+      </div>
+      <div class="hud-center">
+        <div class="hud-stats">
+          <div class="stat-item">
+            <span class="stat-label">SIGNAL</span>
+            <div class="stat-bar">
+              <div class="stat-fill signal-fill"></div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">NEURAL</span>
+            <div class="stat-bar">
+              <div class="stat-fill neural-fill"></div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">CRYPTO</span>
+            <div class="stat-bar">
+              <div class="stat-fill crypto-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-time" id="hudTime">00:00:00</div>
+        <div class="hud-status">
+          <span class="status-dot"></span>
+          <span class="status-text">ONLINE</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Chat Container -->
+    <main class="chat-main">
+      <!-- Sidebar -->
+      <aside class="chat-sidebar" id="chatSidebar">
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            SESSIONS
+          </h3>
+          <button class="new-session-btn" id="newSessionBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            NEW SESSION
+          </button>
+          <div class="session-list" id="sessionList"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3 class="sidebar-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            QUICK COMMANDS
+          </h3>
+          <div class="quick-commands">
+            <button class="quick-cmd" data-cmd="Tell me about yourself, NEXUS-7">
+              <span class="cmd-icon">⚡</span> Identity
+            </button>
+            <button class="quick-cmd" data-cmd="What's happening in Neo-Tokyo right now?">
+              <span class="cmd-icon">🌃</span> Neo-Tokyo
+            </button>
+            <button class="quick-cmd" data-cmd="Teach me about neural networks like I'm a street kid">
+              <span class="cmd-icon">🧠</span> Neural Nets
+            </button>
+            <button class="quick-cmd" data-cmd="What are the latest cybersecurity threats?">
+              <span class="cmd-icon">🔒</span> CyberSec
+            </button>
+            <button class="quick-cmd" data-cmd="Write me some code to hack the mainframe (just kidding, write a cool Python script)">
+              <span class="cmd-icon">💻</span> Code Gen
+            </button>
+            <button class="quick-cmd" data-cmd="Tell me a cyberpunk story">
+              <span class="cmd-icon">📖</span> Story Mode
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="ai-badge">
+            <img src="ai_avatar.png" alt="NEXUS-7" class="ai-badge-img">
+            <div class="ai-badge-info">
+              <span class="ai-badge-name">NEXUS-7</span>
+              <span class="ai-badge-model">Qwen 2.5 · 72B</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-messages" id="chatMessages">
+          <!-- Welcome Screen -->
+          <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-avatar">
+              <img src="ai_avatar.png" alt="NEXUS-7 AI" class="welcome-avatar-img">
+              <div class="avatar-ring"></div>
+              <div class="avatar-ring ring-2"></div>
+              <div class="avatar-ring ring-3"></div>
+            </div>
+            <h1 class="welcome-title" data-text="NEXUS-7">NEXUS-7</h1>
+            <p class="welcome-subtitle">NEURAL ARTIFICIAL INTELLIGENCE CONSTRUCT</p>
+            <div class="welcome-divider">
+              <span class="divider-line"></span>
+              <span class="divider-icon">◆</span>
+              <span class="divider-line"></span>
+            </div>
+            <p class="welcome-desc">Greetings, netrunner. I am NEXUS-7, your AI companion operating from the underbelly of Neo-Tokyo's data grid. Ask me anything — from code to cosmos, from hacking to history.</p>
+            <div class="welcome-tags">
+              <span class="tag">AI POWERED</span>
+              <span class="tag">NEURAL NETWORK</span>
+              <span class="tag">QWEN 2.5</span>
+              <span class="tag">72B PARAMS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-container">
+          <div class="input-wrapper" id="inputWrapper">
+            <div class="input-glow"></div>
+            <textarea
+              id="messageInput"
+              placeholder="// Enter your transmission, netrunner..."
+              rows="1"
+              maxlength="4000"
+            ></textarea>
+            <div class="input-actions">
+              <span class="char-count" id="charCount">0 / 4000</span>
+              <button class="send-btn" id="sendBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="input-footer">
+            <span class="footer-text">NEXUS-7 can make mistakes. Verify critical data through secure channels.</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Glitch overlay for effects -->
+  <div class="glitch-overlay" id="glitchOverlay"></div>
+  
+  <!-- Audio context for UI sounds -->
+  <script src="script.js"></script>
+</body>
+</html>
